@@ -1,0 +1,6 @@
+1. Use hashclash to generate collision of two files with specified prefix ./hashclash/scripts/cpc.sh grade.txt grade2.txt
+2. Hashes of generated files are the same and only the first three lines of the files are read.
+3. We can check if the forged file will work by signing the original file with the clash suffix and verifying if the forged file matches the signature.
+openssl dgst -md5 -sign cakeySec.pem -out grade2048.sign grade.txt.coll
+openssl dgst -md5 -verify public_key2048.pem -signature grade2048.sign grade2.txt.coll
+

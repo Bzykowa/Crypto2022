@@ -1,0 +1,7 @@
+1. run: openssl x509 -in cacertificate.pem -noout -modulus to get the modulus
+2. convert modulus to decimal format
+3. find prime factors of the modulus using docker container with cado-nfs implementation: docker run b4den/rsacrack (normal version didn't work for me)
+4. copy private key calculated by rsacrack to file cakey.pem
+5. generate signature on a forged file:  openssl dgst -md5 -sign cakey.pem -out grade2.sign grade2.txt
+6. extract public key from cacertificate.pem to check if the message was signed correctly: openssl x509 -in cacertificate.pem -pubkey -noout > pub_key.pem
+7. check if forged message is correctly signed: openssl dgst -md5 -verify pub_key.pem -signature grade2.sign grade2.txt
