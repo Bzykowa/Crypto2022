@@ -18,11 +18,11 @@ public class App {
         MerklePuzzle Bob = new MerklePuzzle(N, Alice.getIv());
 
         // Time puzzle generation
-        System.out.println("Alice generates "+N+ " puzzles...");
+        System.out.println("Alice generates " + N + " puzzles...");
         long start = System.currentTimeMillis();
         ArrayList<byte[]> puzzles = Alice.preparePuzzles();
         long end = System.currentTimeMillis();
-        System.out.println("Alice sends "+N+ " puzzles to Bob");
+        System.out.println("Alice sends " + N + " puzzles to Bob");
 
         long puzzleGenTime = end - start;
 
