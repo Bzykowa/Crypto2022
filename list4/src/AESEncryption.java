@@ -13,14 +13,19 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
 
 public class AESEncryption {
 
     private static final String CBC_ALGORITHM = "AES/CBC/PKCS5Padding";
+    private static final String GCM_ALGORITHM = "AES/GCM/NoPadding";
+    private static final int CBC_IV_LENGTH = 16;
+    private static final int GCM_IV_LENGTH = 12;
+    private static final int GCM_TAG_LENGTH = 128;
 
     /**
-     * Generate AES key
+     * Generate AES key.
      * 
      * @param n Bit length of the key
      * @return Generated AES SecretKey
@@ -33,20 +38,26 @@ public class AESEncryption {
     }
 
     /**
-     * Generate IV for the AES encryption
+     * Generate IV for the AES encryption.
      * 
      * @return IvParameterSpec containing generated IV
      */
     public static IvParameterSpec generateIv() {
-        byte[] iv = new byte[16];
+        byte[] iv = new byte[CBC_IV_LENGTH];
         new SecureRandom().nextBytes(iv);
         return new IvParameterSpec(iv);
     }
 
+    public static GCMParameterSpec generateGCMParameter() {
+        byte[] iv = new byte[GCM_IV_LENGTH];
+        new SecureRandom().nextBytes(iv);
+        return new GCMParameterSpec(GCM_TAG_LENGTH, iv);
+
+    }
+
     /**
-     * Encrypt a file using AES encryption
+     * Encrypt a file using AES encryption in CBC Mode.
      * 
-     * @param algorithm  Mode of operation
      * @param key        SecretKey for encryption
      * @param iv         Initialization vector for the encryption
      * @param inputFile  File to be encrypted
@@ -71,6 +82,21 @@ public class AESEncryption {
         processFiles(cipher, inputStream, outputStream);
     }
 
+    /**
+     * Decrypt a file using AES encryption in CBC Mode.
+     * 
+     * @param key        SecretKey for decryption
+     * @param iv         Initialization vector for the decryption
+     * @param inputFile  File to be decrypted
+     * @param outputFile Decrypted file
+     * @throws IOException
+     * @throws NoSuchPaddingException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidAlgorithmParameterException
+     * @throws InvalidKeyException
+     * @throws BadPaddingException
+     * @throws IllegalBlockSizeException
+     */
     public static void decryptFileCBC(SecretKey key, IvParameterSpec iv,
             File inputFile, File outputFile) throws IOException, NoSuchPaddingException,
             NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException,
@@ -83,8 +109,21 @@ public class AESEncryption {
         processFiles(cipher, inputStream, outputStream);
     }
 
+    /**
+     * Apply cipher to the input file for encryption/decryption and save the result
+     * to the output file.
+     * 
+     * @param cipher       Initialized cipher
+     * @param inputStream  Initialized FileStream for the input file
+     * @param outputStream Initialized FileStream for the output file
+     * @throws IOException
+     * @throws IllegalBlockSizeException
+     * @throws BadPaddingException
+     */
     private static void processFiles(Cipher cipher, FileInputStream inputStream, FileOutputStream outputStream)
             throws IOException, IllegalBlockSizeException, BadPaddingException {
+
+        // Work in 64 byte chunks
         byte[] buffer = new byte[64];
         int bytesRead;
         while ((bytesRead = inputStream.read(buffer)) != -1) {
