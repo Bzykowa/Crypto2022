@@ -20,9 +20,13 @@ public class AESEncryption {
 
     private static final String CBC_ALGORITHM = "AES/CBC/PKCS5Padding";
     private static final String GCM_ALGORITHM = "AES/GCM/NoPadding";
+
     private static final int CBC_IV_LENGTH = 16;
     private static final int GCM_IV_LENGTH = 12;
     private static final int GCM_TAG_LENGTH = 128;
+    public static final int DEFAULT_KEY_LENGTH = 256;
+
+    private static final String IV_FILENAME = "iv.txt";
 
     /**
      * Generate AES key.
@@ -38,7 +42,7 @@ public class AESEncryption {
     }
 
     /**
-     * Generate IV for the AES encryption.
+     * Generate IV for the AES-CBC encryption.
      * 
      * @return IvParameterSpec containing generated IV
      */
@@ -48,6 +52,11 @@ public class AESEncryption {
         return new IvParameterSpec(iv);
     }
 
+    /**
+     * Generate IV for the AES-GCM encryption.
+     * 
+     * @return GCMParameterSpec containing generated IV
+     */
     public static GCMParameterSpec generateGCMParameter() {
         byte[] iv = new byte[GCM_IV_LENGTH];
         new SecureRandom().nextBytes(iv);
@@ -71,6 +80,33 @@ public class AESEncryption {
      * @throws IllegalBlockSizeException
      */
     public static void encryptFileCBC(SecretKey key, IvParameterSpec iv,
+            File inputFile, File outputFile) throws IOException, NoSuchPaddingException,
+            NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException,
+            BadPaddingException, IllegalBlockSizeException {
+
+        Cipher cipher = Cipher.getInstance(CBC_ALGORITHM);
+        cipher.init(Cipher.ENCRYPT_MODE, key, iv);
+        FileInputStream inputStream = new FileInputStream(inputFile);
+        FileOutputStream outputStream = new FileOutputStream(outputFile);
+        processFiles(cipher, inputStream, outputStream);
+    }
+
+    /**
+     * Encrypt a file using AES encryption in GCM Mode.
+     * 
+     * @param key        SecretKey for encryption
+     * @param iv         Initialization vector for the encryption
+     * @param inputFile  File to be encrypted
+     * @param outputFile Encrypted file
+     * @throws IOException
+     * @throws NoSuchPaddingException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidAlgorithmParameterException
+     * @throws InvalidKeyException
+     * @throws BadPaddingException
+     * @throws IllegalBlockSizeException
+     */
+    public static void encryptFileGCM(SecretKey key, GCMParameterSpec iv,
             File inputFile, File outputFile) throws IOException, NoSuchPaddingException,
             NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException,
             BadPaddingException, IllegalBlockSizeException {
@@ -110,6 +146,33 @@ public class AESEncryption {
     }
 
     /**
+     * Decrypt a file using AES encryption in GCM Mode.
+     * 
+     * @param key        SecretKey for decryption
+     * @param iv         Initialization vector for the decryption
+     * @param inputFile  File to be decrypted
+     * @param outputFile Decrypted file
+     * @throws IOException
+     * @throws NoSuchPaddingException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidAlgorithmParameterException
+     * @throws InvalidKeyException
+     * @throws BadPaddingException
+     * @throws IllegalBlockSizeException
+     */
+    public static void decryptFileGCM(SecretKey key, GCMParameterSpec iv,
+            File inputFile, File outputFile) throws IOException, NoSuchPaddingException,
+            NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException,
+            BadPaddingException, IllegalBlockSizeException {
+
+        Cipher cipher = Cipher.getInstance(GCM_ALGORITHM);
+        cipher.init(Cipher.DECRYPT_MODE, key, iv);
+        FileInputStream inputStream = new FileInputStream(inputFile);
+        FileOutputStream outputStream = new FileOutputStream(outputFile);
+        processFiles(cipher, inputStream, outputStream);
+    }
+
+    /**
      * Apply cipher to the input file for encryption/decryption and save the result
      * to the output file.
      * 
@@ -138,6 +201,19 @@ public class AESEncryption {
         }
         inputStream.close();
         outputStream.close();
+    }
+
+    /**
+     * Save IV to a file to allow decryption later.
+     * 
+     * @param iv IV to save to a file
+     * @throws IOException
+     */
+    public static void saveIV(byte[] iv) throws IOException {
+        //
+        FileOutputStream ivOutput = new FileOutputStream(IV_FILENAME);
+        ivOutput.write(iv);
+        ivOutput.close();
     }
 
 }
