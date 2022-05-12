@@ -2,11 +2,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
+import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 
 import javax.crypto.SecretKey;
@@ -18,6 +17,8 @@ public class KeyStoreManager {
     private KeyStore ks;
     private String ksPath;
     private String password;
+
+    public static final String MAIN_KEY = "main_key";
 
     /**
      * Main class constructor
@@ -55,22 +56,22 @@ public class KeyStoreManager {
         } catch (FileNotFoundException e) {
             // KeyStore doesn't exist so create one
             ks.load(null, pwdArray);
-            // TODO create a symmetric key
-            // saveKey(alias, key);
-
+            SecretKey sk = AESEncryption.generateKey(AESEncryption.DEFAULT_KEY_LENGTH);
+            saveKey(MAIN_KEY, sk);
         }
     }
 
-   /**
-    * Save a symmetric key to the KeyStore
-    * @param alias Identifier of the key
-    * @param key Key to save in the KeyStore
-    * @throws KeyStoreException
-    * @throws NoSuchAlgorithmException
-    * @throws CertificateException
-    * @throws FileNotFoundException
-    * @throws IOException
-    */
+    /**
+     * Save a symmetric key to the KeyStore
+     * 
+     * @param alias Identifier of the key
+     * @param key   Key to save in the KeyStore
+     * @throws KeyStoreException
+     * @throws NoSuchAlgorithmException
+     * @throws CertificateException
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
     public void saveKey(String alias, SecretKey key) throws KeyStoreException, NoSuchAlgorithmException,
             CertificateException, FileNotFoundException, IOException {
         char[] pwdArray = password.toCharArray();
@@ -82,14 +83,18 @@ public class KeyStoreManager {
 
     /**
      * Read a key entry form the KeyStore
+     * 
      * @param alias Key identifier
      * @return A Key corresponding to submitted alias
-     * @throws UnrecoverableKeyException
      * @throws KeyStoreException
      * @throws NoSuchAlgorithmException
+     * @throws UnrecoverableEntryException
      */
-    public Key getKey(String alias) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException {
-        return ks.getKey(alias, password.toCharArray());
+    public SecretKey getKey(String alias)
+            throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableEntryException {
+        KeyStore.SecretKeyEntry secretKeyEnt = (KeyStore.SecretKeyEntry) ks.getEntry(alias,
+                new KeyStore.PasswordProtection(password.toCharArray()));
+        return secretKeyEnt.getSecretKey();
     }
 
 }
