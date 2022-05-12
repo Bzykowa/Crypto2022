@@ -51,7 +51,7 @@ public class KeyStoreManager {
         char[] pwdArray = password.toCharArray();
 
         try {
-            ks = KeyStore.getInstance("JKS");
+            ks = KeyStore.getInstance("JCEKS");
             ks.load(new FileInputStream(ksPath), pwdArray);
         } catch (FileNotFoundException e) {
             // KeyStore doesn't exist so create one

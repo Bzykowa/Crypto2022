@@ -216,4 +216,6 @@ public class AESEncryption {
         ivOutput.close();
     }
 
+    // TODO Read IV from file for decryption tests
+
 }

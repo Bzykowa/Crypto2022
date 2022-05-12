@@ -57,6 +57,7 @@ public class App {
                 }
                 AESEncryption.saveIV(iv.getIV());
                 System.out.println("Files successfully encrypted.");
+                // TODO Write bytes properly
                 System.out.println("iv: " + iv.getIV().toString());
                 break;
             }
@@ -69,6 +70,7 @@ public class App {
                 }
                 AESEncryption.saveIV(iv.getIV());
                 System.out.println("Files successfully encrypted.");
+                // TODO Write bytes properly
                 System.out.println("iv: " + iv.getIV().toString());
                 break;
             }
@@ -112,6 +114,7 @@ public class App {
                 AESEncryption.encryptFileCBC(sk, iv, challenge, result);
                 AESEncryption.saveIV(iv.getIV());
                 System.out.println("Challenge successfully encrypted.");
+                // TODO Write bytes properly
                 System.out.println("iv: " + iv.getIV().toString());
                 break;
             }
@@ -120,6 +123,7 @@ public class App {
                 AESEncryption.encryptFileGCM(sk, iv, challenge, result);
                 AESEncryption.saveIV(iv.getIV());
                 System.out.println("Challenge successfully encrypted.");
+                // TODO Write bytes properly
                 System.out.println("iv: " + iv.getIV().toString());
                 break;
             }
@@ -141,7 +145,8 @@ public class App {
             try {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
                 pass = reader.readLine();
-                ks = new KeyStoreManager("KeyStore.jks", pass);
+                ks = new KeyStoreManager("KeyStore.jceks", pass);
+                wrongPassword = false;
             } catch (IOException e) {
                 // Probably a wrong password if not close gracefully
                 if (e.getCause() instanceof UnrecoverableKeyException && unsuccessfulLoginCounter < 3) {
