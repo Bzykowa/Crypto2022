@@ -111,7 +111,7 @@ public class AESEncryption {
             NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException,
             BadPaddingException, IllegalBlockSizeException {
 
-        Cipher cipher = Cipher.getInstance(CBC_ALGORITHM);
+        Cipher cipher = Cipher.getInstance(GCM_ALGORITHM);
         cipher.init(Cipher.ENCRYPT_MODE, key, iv);
         FileInputStream inputStream = new FileInputStream(inputFile);
         FileOutputStream outputStream = new FileOutputStream(outputFile);
@@ -210,12 +210,22 @@ public class AESEncryption {
      * @throws IOException
      */
     public static void saveIV(byte[] iv) throws IOException {
-        //
         FileOutputStream ivOutput = new FileOutputStream(IV_FILENAME);
         ivOutput.write(iv);
         ivOutput.close();
     }
 
-    // TODO Read IV from file for decryption tests
+    /**
+     * Read IV from a file to use in file decryption
+     * 
+     * @return Byte array with IV
+     * @throws IOException
+     */
+    public static byte[] loadIV() throws IOException {
+        FileInputStream ivInput = new FileInputStream(IV_FILENAME);
+        byte[] iv = ivInput.readAllBytes();
+        ivInput.close();
+        return iv;
+    }
 
 }

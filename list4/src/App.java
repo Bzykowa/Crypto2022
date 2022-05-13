@@ -10,6 +10,7 @@ import java.security.SecureRandom;
 import java.security.UnrecoverableEntryException;
 import java.security.UnrecoverableKeyException;
 import java.util.ArrayList;
+import java.util.Base64;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -58,7 +59,7 @@ public class App {
                 AESEncryption.saveIV(iv.getIV());
                 System.out.println("Files successfully encrypted.");
                 // TODO Write bytes properly
-                System.out.println("iv: " + iv.getIV().toString());
+                System.out.println("iv: " + Base64.getEncoder().encodeToString(iv.getIV()));
                 break;
             }
             case "GCM": {
@@ -71,7 +72,7 @@ public class App {
                 AESEncryption.saveIV(iv.getIV());
                 System.out.println("Files successfully encrypted.");
                 // TODO Write bytes properly
-                System.out.println("iv: " + iv.getIV().toString());
+                System.out.println("iv: " + Base64.getEncoder().encodeToString(iv.getIV()));
                 break;
             }
             default: {
@@ -115,7 +116,7 @@ public class App {
                 AESEncryption.saveIV(iv.getIV());
                 System.out.println("Challenge successfully encrypted.");
                 // TODO Write bytes properly
-                System.out.println("iv: " + iv.getIV().toString());
+                System.out.println("iv: " + Base64.getEncoder().encodeToString(iv.getIV()));
                 break;
             }
             case "GCM": {
@@ -124,7 +125,7 @@ public class App {
                 AESEncryption.saveIV(iv.getIV());
                 System.out.println("Challenge successfully encrypted.");
                 // TODO Write bytes properly
-                System.out.println("iv: " + iv.getIV().toString());
+                System.out.println("iv: " + Base64.getEncoder().encodeToString(iv.getIV()));
                 break;
             }
             default: {
