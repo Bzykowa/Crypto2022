@@ -58,7 +58,6 @@ public class Task1 {
                 }
                 AESEncryption.saveIV(iv.getIV());
                 System.out.println("Files successfully encrypted.");
-                // TODO Write bytes properly
                 System.out.println("iv: " + Base64.getEncoder().encodeToString(iv.getIV()));
                 break;
             }
@@ -71,7 +70,6 @@ public class Task1 {
                 }
                 AESEncryption.saveIV(iv.getIV());
                 System.out.println("Files successfully encrypted.");
-                // TODO Write bytes properly
                 System.out.println("iv: " + Base64.getEncoder().encodeToString(iv.getIV()));
                 break;
             }
@@ -115,7 +113,6 @@ public class Task1 {
                 AESEncryption.encryptFileCBC(sk, iv, challenge, result);
                 AESEncryption.saveIV(iv.getIV());
                 System.out.println("Challenge successfully encrypted.");
-                // TODO Write bytes properly
                 System.out.println("iv: " + Base64.getEncoder().encodeToString(iv.getIV()));
                 break;
             }
@@ -124,7 +121,6 @@ public class Task1 {
                 AESEncryption.encryptFileGCM(sk, iv, challenge, result);
                 AESEncryption.saveIV(iv.getIV());
                 System.out.println("Challenge successfully encrypted.");
-                // TODO Write bytes properly
                 System.out.println("iv: " + Base64.getEncoder().encodeToString(iv.getIV()));
                 break;
             }
