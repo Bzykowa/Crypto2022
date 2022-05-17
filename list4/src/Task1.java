@@ -19,7 +19,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
 
-public class App {
+public class Task1 {
 
     private static String pass;
     private static String mode;

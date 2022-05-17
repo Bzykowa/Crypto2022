@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -62,6 +63,38 @@ public class AESEncryption {
         new SecureRandom().nextBytes(iv);
         return new GCMParameterSpec(GCM_TAG_LENGTH, iv);
 
+    }
+
+    /**
+     * Generate vulnerable IV for the AES-CBC encryption.
+     * 
+     * @return IvParameterSpec containing generated IV
+     */
+    public static IvParameterSpec generateVulnerableIv(byte[] iv) {
+        byte[] incrementedIV = new BigInteger(iv).add(BigInteger.ONE).toByteArray();
+        return new IvParameterSpec(incrementedIV);
+    }
+
+    /**
+     * Encrypt a byte[] plainText using AES-CBC encryption mode.
+     * 
+     * @param key       SecretKey for encryption
+     * @param iv        Initialization vector for the encryption
+     * @param plainText byte[] to be encrypted
+     * @return byte[] with cipher text of the submitted plain text
+     * @throws InvalidKeyException
+     * @throws InvalidAlgorithmParameterException
+     * @throws IllegalBlockSizeException
+     * @throws BadPaddingException
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchPaddingException
+     */
+    public static byte[] encryptMessageCBC(SecretKey key, IvParameterSpec iv, byte[] plainText)
+            throws InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException,
+            BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+        Cipher cipher = Cipher.getInstance(CBC_ALGORITHM);
+        cipher.init(Cipher.ENCRYPT_MODE, key, iv);
+        return cipher.doFinal(plainText);
     }
 
     /**
